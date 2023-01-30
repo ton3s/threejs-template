@@ -8,18 +8,21 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Sizes
 const sizes = {
-    width: 800,
-    height: 600
+	width: 800,
+	height: 600,
 }
 
 // Scene
 const scene = new THREE.Scene()
 
 // Object
-const mesh = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1, 5, 5, 5),
-    new THREE.MeshBasicMaterial({ color: 0xff0000 })
-)
+const geometry = new THREE.BoxGeometry(1, 1, 1, 5, 5, 5)
+const material = new THREE.MeshPhongMaterial({
+	color: 0xff0000,
+	specular: 0x444444,
+	shininess: 60,
+})
+const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
 
 // Camera
@@ -30,27 +33,33 @@ camera.position.z = 2
 camera.lookAt(mesh.position)
 scene.add(camera)
 
+// Light sources
+const ambient = new THREE.HemisphereLight(0xffffff, 0x666666, 0.3)
+scene.add(ambient)
+
+const light = new THREE.DirectionalLight()
+light.position.set(0.2, 1, 1.5)
+scene.add(light)
+
 // Renderer
 const renderer = new THREE.WebGLRenderer({
-    canvas: canvas
+	canvas: canvas,
 })
 renderer.setSize(sizes.width, sizes.height)
 
 // Animate
 const clock = new THREE.Clock()
 
-const tick = () =>
-{
-    const elapsedTime = clock.getElapsedTime()
+const tick = () => {
+	const elapsedTime = clock.getElapsedTime()
 
-    // Update objects
-    mesh.rotation.y = elapsedTime;
+	// Update objects
+	mesh.rotation.y = elapsedTime
 
-    // Render
-    renderer.render(scene, camera)
+	// Render
+	renderer.render(scene, camera)
 
-    // Call tick again on the next frame
-    window.requestAnimationFrame(tick)
+	// Call tick again on the next frame
+	window.requestAnimationFrame(tick)
 }
-
 tick()
