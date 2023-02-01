@@ -9,8 +9,8 @@ const canvas = document.querySelector("canvas.webgl")
 
 // Sizes
 const sizes = {
-	width: 800,
-	height: 600,
+	width: window.innerWidth,
+	height: window.innerHeight,
 }
 const aspectRatio = sizes.width / sizes.height
 
@@ -18,7 +18,7 @@ const aspectRatio = sizes.width / sizes.height
 const scene = new THREE.Scene()
 
 // Object
-const geometry = new THREE.BoxGeometry(1, 1, 1, 5, 5, 5)
+const geometry = new THREE.BoxGeometry()
 const material = new THREE.MeshPhongMaterial({
 	color: 0xff0000,
 	specular: 0x444444,
@@ -78,6 +78,43 @@ const renderer = new THREE.WebGLRenderer({
 	canvas: canvas,
 })
 renderer.setSize(sizes.width, sizes.height)
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+// Window
+window.addEventListener("resize", () => {
+	// Update sizes
+	sizes.width = window.innerWidth
+	sizes.height = window.innerHeight
+
+	// Update camera
+	camera.aspect = sizes.width / sizes.height
+	camera.updateProjectionMatrix()
+
+	// Update renderer
+	renderer.setSize(sizes.width, sizes.height)
+	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+})
+
+// Click events
+window.addEventListener("dblclick", () => {
+	const fullscreenElement =
+		document.fullscreenElement || document.webkitFullscreenElement
+
+	// Handle both Safari and Chrome browsers
+	if (!fullscreenElement) {
+		if (canvas.requestFullscreen) {
+			canvas.requestFullscreen()
+		} else if (canvas.webkitRequestFullscreen) {
+			canvas.webkitRequestFullscreen()
+		}
+	} else {
+		if (document.exitFullscreen) {
+			document.exitFullscreen()
+		} else if (document.webkitExitFullscreen) {
+			document.webkitExitFullscreen()
+		}
+	}
+})
 
 // Animate
 const clock = new THREE.Clock()
