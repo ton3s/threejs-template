@@ -3,14 +3,18 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import gsap from 'gsap'
 import * as dat from 'lil-gui'
 
-/**
- * Debug
- */
+const image = new Image()
+const texture = new THREE.Texture(image)
+image.addEventListener('load', () => {
+	console.log('image loaded')
+	texture.needsUpdate = true
+})
+image.src = '/Door_Wood_001_basecolor.jpg'
+
+// Debug
 const gui = new dat.GUI()
 
-/**
- * Base
- */
+// Base
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 
@@ -37,9 +41,9 @@ const parameters = {
 }
 const geometry = new THREE.BoxGeometry()
 const material = new THREE.MeshPhongMaterial({
-	color: parameters.color,
+	map: texture,
 	specular: 0x444444,
-	shininess: 60,
+	shininess: 30,
 })
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
@@ -127,13 +131,6 @@ const clock = new THREE.Clock()
 
 const tick = () => {
 	const elapsedTime = clock.getElapsedTime()
-
-	// Update objects
-	// mesh.rotation.y = elapsedTime
-	// camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 2
-	// camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 2
-	// camera.position.y = cursor.y * 3
-	// camera.lookAt(mesh.position)
 
 	// Update controls
 	controls.update()
