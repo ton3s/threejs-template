@@ -1,5 +1,12 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import gsap from 'gsap'
+import * as dat from 'lil-gui'
+
+/**
+ * Debug
+ */
+const gui = new dat.GUI()
 
 /**
  * Base
@@ -18,25 +25,35 @@ const aspectRatio = sizes.width / sizes.height
 const scene = new THREE.Scene()
 
 // Object
-// Create an empty BufferGeometry
-const geometry = new THREE.BufferGeometry()
-
-// Create a Float32Array containing the vertices position (3 by 3)
-const positionsArray = new Float32Array([
-	0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 2, 0,
-])
-
-// Create the attribute and name it 'position'
-const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3)
-geometry.setAttribute('position', positionsAttribute)
+const parameters = {
+	color: '#0091ff',
+	spin: () => {
+		gsap.to(mesh.rotation, {
+			duration: 2,
+			y: mesh.rotation.y + Math.PI * 2,
+			z: mesh.rotation.z + Math.PI * 2,
+		})
+	},
+}
+const geometry = new THREE.BoxGeometry()
 const material = new THREE.MeshPhongMaterial({
-	color: 0xff0000,
+	color: parameters.color,
 	specular: 0x444444,
 	shininess: 60,
-	wireframe: true,
 })
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
+
+// Debug Controls
+gui.add(mesh.position, 'y').min(-3).max(3).step(0.01).name('elevation')
+gui.add(mesh, 'visible')
+gui.add(material, 'wireframe')
+
+// Color
+gui.addColor(parameters, 'color').onChange(() => {
+	material.color.set(parameters.color)
+})
+gui.add(parameters, 'spin')
 
 // Camera
 const camera = new THREE.PerspectiveCamera(
@@ -45,16 +62,7 @@ const camera = new THREE.PerspectiveCamera(
 	1,
 	100
 )
-// const camera = new THREE.OrthographicCamera(
-// 	-1 * aspectRatio,
-// 	1 * aspectRatio,
-// 	1,
-// 	-1,
-// 	0.1,
-// 	100
-// )
-// camera.position.x = 2
-// camera.position.y = 2
+
 camera.position.z = 3
 camera.lookAt(mesh.position)
 scene.add(camera)
@@ -62,19 +70,6 @@ scene.add(camera)
 // Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
-
-// controls.target.y = 2
-// controls.update()
-
-// Cursor
-// const cursor = {
-// 	x: 0,
-// 	y: 0,
-// }
-// window.addEventListener("mousemove", (event) => {
-// 	cursor.x = event.clientX / sizes.width - 0.5
-// 	cursor.y = -(event.clientY / sizes.height - 0.5)
-// })
 
 // Light sources
 const ambient = new THREE.HemisphereLight(0xffffff, 0x666666, 0.3)
