@@ -1,11 +1,11 @@
-import * as THREE from "three"
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
+import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 /**
  * Base
  */
 // Canvas
-const canvas = document.querySelector("canvas.webgl")
+const canvas = document.querySelector('canvas.webgl')
 
 // Sizes
 const sizes = {
@@ -18,11 +18,22 @@ const aspectRatio = sizes.width / sizes.height
 const scene = new THREE.Scene()
 
 // Object
-const geometry = new THREE.BoxGeometry()
+// Create an empty BufferGeometry
+const geometry = new THREE.BufferGeometry()
+
+// Create a Float32Array containing the vertices position (3 by 3)
+const positionsArray = new Float32Array([
+	0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 2, 0,
+])
+
+// Create the attribute and name it 'position'
+const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3)
+geometry.setAttribute('position', positionsAttribute)
 const material = new THREE.MeshPhongMaterial({
 	color: 0xff0000,
 	specular: 0x444444,
 	shininess: 60,
+	wireframe: true,
 })
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
@@ -81,7 +92,7 @@ renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 // Window
-window.addEventListener("resize", () => {
+window.addEventListener('resize', () => {
 	// Update sizes
 	sizes.width = window.innerWidth
 	sizes.height = window.innerHeight
@@ -96,7 +107,7 @@ window.addEventListener("resize", () => {
 })
 
 // Click events
-window.addEventListener("dblclick", () => {
+window.addEventListener('dblclick', () => {
 	const fullscreenElement =
 		document.fullscreenElement || document.webkitFullscreenElement
 
