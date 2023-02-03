@@ -3,14 +3,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import gsap from 'gsap'
 import * as dat from 'lil-gui'
 
-const image = new Image()
-const texture = new THREE.Texture(image)
-image.addEventListener('load', () => {
-	console.log('image loaded')
-	texture.needsUpdate = true
-})
-image.src = '/Door_Wood_001_basecolor.jpg'
-
 // Debug
 const gui = new dat.GUI()
 
@@ -39,9 +31,35 @@ const parameters = {
 		})
 	},
 }
-const geometry = new THREE.BoxGeometry()
+
+const loadingManager = new THREE.LoadingManager()
+const textureLoader = new THREE.TextureLoader(loadingManager)
+const colorTexture = textureLoader.load('/Door_Wood_001_basecolor.jpg')
+const alphaTexture = textureLoader.load('/Door_Wood_001_opacity.jpg')
+const heightTexture = textureLoader.load('/Door_Wood_001_height.png')
+const normalTexture = textureLoader.load('/Door_Wood_001_normal.jpg')
+const ambientOcclusionTexture = textureLoader.load(
+	'/Door_Wood_001_ambientOcclusion.jpg'
+)
+const metalnessTexture = textureLoader.load('/Door_Wood_001_metallic.jpg')
+const roughnessTexture = textureLoader.load('/Door_Wood_001_roughness.jpg')
+const minecraftTexture = textureLoader.load('/minecraft.png')
+
+// Texture configurations
+// ambientOcclusionTexture.repeat.x = 1
+// ambientOcclusionTexture.repeat.y = 1
+// ambientOcclusionTexture.wrapS = THREE.MirroredRepeatWrapping
+// ambientOcclusionTexture.wrapT = THREE.MirroredRepeatWrapping
+// ambientOcclusionTexture.offset.x = 0.5
+// ambientOcclusionTexture.offset.y = 0.5
+// ambientOcclusionTexture.rotation = Math.PI * 0.25
+// ambientOcclusionTexture.center.x = 0.5
+// ambientOcclusionTexture.center.y = 0.5
+minecraftTexture.magFilter = THREE.NearestFilter
+
+const geometry = new THREE.BoxGeometry(1, 1, 1)
 const material = new THREE.MeshPhongMaterial({
-	map: texture,
+	map: minecraftTexture,
 	specular: 0x444444,
 	shininess: 30,
 })
@@ -88,7 +106,7 @@ const renderer = new THREE.WebGLRenderer({
 	canvas: canvas,
 })
 renderer.setSize(sizes.width, sizes.height)
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 3))
 
 // Window
 window.addEventListener('resize', () => {
@@ -102,7 +120,7 @@ window.addEventListener('resize', () => {
 
 	// Update renderer
 	renderer.setSize(sizes.width, sizes.height)
-	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 3))
 })
 
 // Click events
