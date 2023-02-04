@@ -1,140 +1,68 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import gsap from 'gsap'
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
 import * as dat from 'lil-gui'
 
+/**
+ * Base
+ */
 // Debug
 const gui = new dat.GUI()
 
-// Base
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
-
-// Sizes
-const sizes = {
-	width: window.innerWidth,
-	height: window.innerHeight,
-}
-const aspectRatio = sizes.width / sizes.height
 
 // Scene
 const scene = new THREE.Scene()
 
-// Textures
+// Axes helper
+const axesHelper = new THREE.AxesHelper()
+scene.add(axesHelper)
+
+/**
+ * Textures
+ */
 const textureLoader = new THREE.TextureLoader()
-const doorColorTexture = textureLoader.load('/textures/door/color.jpg')
-const doorAlphaTexture = textureLoader.load('/textures/door/alpha.jpg')
-const doorAmbientOcclusionTexture = textureLoader.load(
-	'/textures/door/ambientOcclusion.jpg'
-)
-const doorHeightTexture = textureLoader.load('/textures/door/height.jpg')
-const doorNormalTexture = textureLoader.load('/textures/door/normal.jpg')
-const doorMetalnessTexture = textureLoader.load('/textures/door/metalness.jpg')
-const doorRoughnessTexture = textureLoader.load('/textures/door/roughness.jpg')
 
-// Matcap Textures
-// const matcapTexture = textureLoader.load('/textures/matcaps/1.png')
-// const matcapTexture = textureLoader.load('/textures/matcaps/2.png')
-const matcapTexture = textureLoader.load('/textures/matcaps/3.png')
-// const matcapTexture = textureLoader.load('/textures/matcaps/4.png')
-// const matcapTexture = textureLoader.load('/textures/matcaps/5.png')
-// const matcapTexture = textureLoader.load('/textures/matcaps/6.png')
-// const matcapTexture = textureLoader.load('/textures/matcaps/7.png')
-//const matcapTexture = textureLoader.load('/textures/matcaps/8.png')
+/**
+ * Fonts
+ */
+const fontLoader = new FontLoader()
 
-// Gradient Textures
-// const gradientTexture = textureLoader.load('/textures/gradients/3.jpg')
-const gradientTexture = textureLoader.load('/textures/gradients/5.jpg')
+fontLoader.load('/fonts/helvetiker_regular.typeface.json', (font) => {
+	const textGeometry = new TextGeometry('State Farm', {
+		font: font,
+		size: 0.5,
+		height: 0.2,
+		curveSegments: 3,
+		bevelEnabled: true,
+		bevelThickness: 0.03,
+		bevelSize: 0.02,
+		bevelOffset: 0,
+		bevelSegments: 3,
+	})
 
-// Environment Map Textures
-const cubeTextureLoader = new THREE.CubeTextureLoader()
-const environmentMapTexture = cubeTextureLoader.load([
-	'/textures/environmentMaps/1/px.jpg',
-	'/textures/environmentMaps/1/nx.jpg',
-	'/textures/environmentMaps/1/py.jpg',
-	'/textures/environmentMaps/1/ny.jpg',
-	'/textures/environmentMaps/1/pz.jpg',
-	'/textures/environmentMaps/1/nz.jpg',
-])
+	const textMaterial = new THREE.MeshBasicMaterial({ wireframe: true })
+	const text = new THREE.Mesh(textGeometry, textMaterial)
+	textGeometry.computeBoundingBox()
+	textGeometry.translate(
+		-(textGeometry.boundingBox.max.x - 0.02) * 0.5, // Subtract bevel size
+		-(textGeometry.boundingBox.max.y - 0.02) * 0.5, // Subtract bevel size
+		-(textGeometry.boundingBox.max.z - 0.03) * 0.5 // Subtract bevel thickness
+	)
+	scene.add(text)
+	console.log(textGeometry.boundingBox)
+})
 
-// Object
-const parameters = {
-	color: '#0091ff',
+/**
+ * Sizes
+ */
+const sizes = {
+	width: window.innerWidth,
+	height: window.innerHeight,
 }
-const material = new THREE.MeshStandardMaterial()
-material.metalness = 0.7
-material.roughness = 0.2
-material.envMap = environmentMapTexture
-material.side = THREE.DoubleSide
 
-const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 64, 64), material)
-sphere.position.x = -1.5
-const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1, 100, 100), material)
-const torus = new THREE.Mesh(
-	new THREE.TorusGeometry(0.3, 0.2, 64, 128),
-	material
-)
-torus.position.x = 1.5
-scene.add(sphere, plane, torus)
-
-sphere.geometry.setAttribute(
-	'uv2',
-	new THREE.BufferAttribute(sphere.geometry.attributes.uv.array, 2)
-)
-plane.geometry.setAttribute(
-	'uv2',
-	new THREE.BufferAttribute(plane.geometry.attributes.uv.array, 2)
-)
-torus.geometry.setAttribute(
-	'uv2',
-	new THREE.BufferAttribute(torus.geometry.attributes.uv.array, 2)
-)
-
-// Debug Controls
-gui.add(material, 'wireframe')
-gui.add(material, 'metalness').min(0).max(1).step(0.0001)
-gui.add(material, 'roughness').min(0).max(1).step(0.0001)
-gui.add(material, 'aoMapIntensity').min(0).max(10).step(0.0001)
-gui.add(material, 'displacementScale').min(0).max(1).step(0.0001)
-
-// Color
-gui.addColor(parameters, 'color').onChange(() => {
-	material.color.set(parameters.color)
-})
-
-// Camera
-const camera = new THREE.PerspectiveCamera(
-	75,
-	sizes.width / sizes.height,
-	0.1,
-	100
-)
-
-camera.position.z = 3
-scene.add(camera)
-
-// Controls
-const controls = new OrbitControls(camera, canvas)
-controls.enableDamping = true
-
-// Light sources
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
-scene.add(ambientLight)
-
-const pointLight = new THREE.PointLight(0xffffff, 0.5)
-pointLight.position.x = 2
-pointLight.position.y = 3
-pointLight.position.z = 4
-scene.add(pointLight)
-
-// Renderer
-const renderer = new THREE.WebGLRenderer({
-	canvas: canvas,
-})
-renderer.setSize(sizes.width, sizes.height)
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 3))
-
-// Window
 window.addEventListener('resize', () => {
 	// Update sizes
 	sizes.width = window.innerWidth
@@ -146,31 +74,40 @@ window.addEventListener('resize', () => {
 
 	// Update renderer
 	renderer.setSize(sizes.width, sizes.height)
-	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 3))
+	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
 
-// Click events
-window.addEventListener('dblclick', () => {
-	const fullscreenElement =
-		document.fullscreenElement || document.webkitFullscreenElement
+/**
+ * Camera
+ */
+// Base camera
+const camera = new THREE.PerspectiveCamera(
+	75,
+	sizes.width / sizes.height,
+	0.1,
+	100
+)
+camera.position.x = 1
+camera.position.y = 1
+camera.position.z = 2
+scene.add(camera)
 
-	// Handle both Safari and Chrome browsers
-	if (!fullscreenElement) {
-		if (canvas.requestFullscreen) {
-			canvas.requestFullscreen()
-		} else if (canvas.webkitRequestFullscreen) {
-			canvas.webkitRequestFullscreen()
-		}
-	} else {
-		if (document.exitFullscreen) {
-			document.exitFullscreen()
-		} else if (document.webkitExitFullscreen) {
-			document.webkitExitFullscreen()
-		}
-	}
+// Controls
+const controls = new OrbitControls(camera, canvas)
+controls.enableDamping = true
+
+/**
+ * Renderer
+ */
+const renderer = new THREE.WebGLRenderer({
+	canvas: canvas,
 })
+renderer.setSize(sizes.width, sizes.height)
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
-// Animate
+/**
+ * Animate
+ */
 const clock = new THREE.Clock()
 
 const tick = () => {
@@ -179,20 +116,11 @@ const tick = () => {
 	// Update controls
 	controls.update()
 
-	// Objects
-	// Update objects
-	sphere.rotation.y = 0.2 * elapsedTime
-	plane.rotation.y = 0.2 * elapsedTime
-	torus.rotation.y = 0.2 * elapsedTime
-
-	sphere.rotation.x = 0.15 * elapsedTime
-	plane.rotation.x = 0.15 * elapsedTime
-	torus.rotation.x = 0.15 * elapsedTime
-
 	// Render
 	renderer.render(scene, camera)
 
 	// Call tick again on the next frame
 	window.requestAnimationFrame(tick)
 }
+
 tick()
