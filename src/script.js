@@ -39,8 +39,8 @@ const parameters = {
 	color: '#0091ff',
 }
 const material = new THREE.MeshBasicMaterial()
-material.transparent = true
-material.opacity = 0.1
+material.map = doorColorTexture
+material.side = THREE.DoubleSide
 
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), material)
 sphere.position.x = -1.5
@@ -137,13 +137,13 @@ const tick = () => {
 
 	// Objects
 	// Update objects
-	sphere.rotation.y = 0.1 * elapsedTime
-	plane.rotation.y = 0.1 * elapsedTime
-	torus.rotation.y = 0.1 * elapsedTime
+	sphere.rotation.y = 0.5 * elapsedTime
+	plane.rotation.y = 0.5 * elapsedTime
+	torus.rotation.y = 0.5 * elapsedTime
 
-	sphere.rotation.x = 0.15 * elapsedTime
-	plane.rotation.x = 0.15 * elapsedTime
-	torus.rotation.x = 0.15 * elapsedTime
+	sphere.rotation.x = 0.3 * elapsedTime
+	plane.rotation.x = 0.3 * elapsedTime
+	torus.rotation.x = 0.3 * elapsedTime
 
 	// Render
 	renderer.render(scene, camera)
