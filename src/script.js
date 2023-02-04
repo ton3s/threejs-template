@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
 import * as dat from 'lil-gui'
+import { MeshBasicMaterial } from 'three'
 
 /**
  * Base
@@ -17,8 +18,8 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 // Axes helper
-const axesHelper = new THREE.AxesHelper()
-scene.add(axesHelper)
+// const axesHelper = new THREE.AxesHelper()
+// scene.add(axesHelper)
 
 /**
  * Textures
@@ -56,7 +57,10 @@ const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 20, 45)
 const donuts = []
 
 for (let i = 0; i < 100; i++) {
-	const donut = new THREE.Mesh(donutGeometry, material)
+	const donut = new THREE.Mesh(
+		donutGeometry,
+		new THREE.MeshBasicMaterial({ wireframe: true })
+	)
 	scene.add(donut)
 
 	// Randomize its position
