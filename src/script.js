@@ -39,7 +39,8 @@ const parameters = {
 	color: '#0091ff',
 }
 const material = new THREE.MeshBasicMaterial()
-material.wireframe = true
+material.transparent = true
+material.opacity = 0.1
 
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), material)
 sphere.position.x = -1.5
