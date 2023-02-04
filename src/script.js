@@ -50,13 +50,9 @@ const gradientTexture = textureLoader.load('/textures/gradients/5.jpg')
 const parameters = {
 	color: '#0091ff',
 }
-const material = new THREE.MeshToonMaterial()
-material.gradientMap = gradientTexture
-
-// Gradient texture is tiny so need to use min, mag
-gradientTexture.minFilter = THREE.NearestFilter
-gradientTexture.magFilter = THREE.NearestFilter
-gradientTexture.generateMipmaps = false
+const material = new THREE.MeshStandardMaterial()
+material.metalness = 0.45
+material.roughness = 0.65
 material.side = THREE.DoubleSide
 
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), material)
@@ -71,6 +67,8 @@ scene.add(sphere, plane, torus)
 
 // Debug Controls
 gui.add(material, 'wireframe')
+gui.add(material, 'metalness').min(0).max(1).step(0.0001)
+gui.add(material, 'roughness').min(0).max(1).step(0.0001)
 
 // Color
 gui.addColor(parameters, 'color').onChange(() => {
