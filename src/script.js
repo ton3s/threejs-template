@@ -31,6 +31,8 @@ const doorHeightTexture = textureLoader.load('/textures/door/height.jpg')
 const doorNormalTexture = textureLoader.load('/textures/door/normal.jpg')
 const doorMetalnessTexture = textureLoader.load('/textures/door/metalness.jpg')
 const doorRoughnessTexture = textureLoader.load('/textures/door/roughness.jpg')
+
+// Matcap Textures
 // const matcapTexture = textureLoader.load('/textures/matcaps/1.png')
 // const matcapTexture = textureLoader.load('/textures/matcaps/2.png')
 const matcapTexture = textureLoader.load('/textures/matcaps/3.png')
@@ -39,15 +41,22 @@ const matcapTexture = textureLoader.load('/textures/matcaps/3.png')
 // const matcapTexture = textureLoader.load('/textures/matcaps/6.png')
 // const matcapTexture = textureLoader.load('/textures/matcaps/7.png')
 //const matcapTexture = textureLoader.load('/textures/matcaps/8.png')
-const gradientTexture = textureLoader.load('/textures/gradients/3.jpg')
+
+// Gradient Textures
+// const gradientTexture = textureLoader.load('/textures/gradients/3.jpg')
+const gradientTexture = textureLoader.load('/textures/gradients/5.jpg')
 
 // Object
 const parameters = {
 	color: '#0091ff',
 }
-const material = new THREE.MeshPhongMaterial()
-material.shininess = 100
-material.specular = new THREE.Color(0x1188ff)
+const material = new THREE.MeshToonMaterial()
+material.gradientMap = gradientTexture
+
+// Gradient texture is tiny so need to use min, mag
+gradientTexture.minFilter = THREE.NearestFilter
+gradientTexture.magFilter = THREE.NearestFilter
+gradientTexture.generateMipmaps = false
 material.side = THREE.DoubleSide
 
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), material)
