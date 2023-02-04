@@ -46,14 +46,25 @@ const matcapTexture = textureLoader.load('/textures/matcaps/3.png')
 // const gradientTexture = textureLoader.load('/textures/gradients/3.jpg')
 const gradientTexture = textureLoader.load('/textures/gradients/5.jpg')
 
+// Environment Map Textures
+const cubeTextureLoader = new THREE.CubeTextureLoader()
+const environmentMapTexture = cubeTextureLoader.load([
+	'/textures/environmentMaps/1/px.jpg',
+	'/textures/environmentMaps/1/nx.jpg',
+	'/textures/environmentMaps/1/py.jpg',
+	'/textures/environmentMaps/1/ny.jpg',
+	'/textures/environmentMaps/1/pz.jpg',
+	'/textures/environmentMaps/1/nz.jpg',
+])
+
 // Object
 const parameters = {
 	color: '#0091ff',
 }
 const material = new THREE.MeshStandardMaterial()
-material.map = doorColorTexture
-material.displacementMap = doorHeightTexture
-material.displacementScale = 0.05
+material.metalness = 0.7
+material.roughness = 0.2
+material.envMap = environmentMapTexture
 material.side = THREE.DoubleSide
 
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 64, 64), material)
@@ -78,11 +89,6 @@ torus.geometry.setAttribute(
 	'uv2',
 	new THREE.BufferAttribute(torus.geometry.attributes.uv.array, 2)
 )
-material.aoMap = doorAmbientOcclusionTexture
-material.aoMapIntensity = 1
-material.normalScale.set(0.5, 0.5)
-material.transparent = true
-material.alphaMap = doorAlphaTexture
 
 // Debug Controls
 gui.add(material, 'wireframe')
