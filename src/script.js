@@ -24,6 +24,8 @@ scene.add(axesHelper)
  * Textures
  */
 const textureLoader = new THREE.TextureLoader()
+const matcapTexture = textureLoader.load('/textures/matcaps/5.png')
+const material = new THREE.MeshMatcapMaterial({ matcap: matcapTexture })
 
 /**
  * Fonts
@@ -35,20 +37,42 @@ fontLoader.load('/fonts/helvetiker_regular.typeface.json', (font) => {
 		font: font,
 		size: 0.5,
 		height: 0.2,
-		curveSegments: 3,
+		curveSegments: 4,
 		bevelEnabled: true,
 		bevelThickness: 0.03,
 		bevelSize: 0.02,
 		bevelOffset: 0,
-		bevelSegments: 3,
+		bevelSegments: 4,
 	})
 
-	const textMaterial = new THREE.MeshBasicMaterial({ wireframe: true })
-	const text = new THREE.Mesh(textGeometry, textMaterial)
+	const text = new THREE.Mesh(textGeometry, material)
 	textGeometry.center()
 	scene.add(text)
 	console.log(textGeometry.boundingBox)
 })
+
+// Objects
+const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 20, 45)
+const donuts = []
+
+for (let i = 0; i < 100; i++) {
+	const donut = new THREE.Mesh(donutGeometry, material)
+	scene.add(donut)
+
+	// Randomize its position
+	donut.position.x = (Math.random() - 0.5) * 10
+	donut.position.y = (Math.random() - 0.5) * 10
+	donut.position.z = (Math.random() - 0.5) * 10
+
+	// Randomize its rotation
+	donut.rotation.x = Math.random() * Math.PI
+	donut.rotation.y = Math.random() * Math.PI
+
+	// Randomize the scale
+	const scale = Math.random()
+	donut.scale.set(scale, scale, scale)
+	donuts.push(donut)
+}
 
 /**
  * Sizes
@@ -110,6 +134,11 @@ const tick = () => {
 
 	// Update controls
 	controls.update()
+
+	// Animate donuts
+	donuts.forEach((donut) => {
+		donut.rotation.y = elapsedTime
+	})
 
 	// Render
 	renderer.render(scene, camera)
