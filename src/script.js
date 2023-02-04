@@ -23,52 +23,19 @@ const scene = new THREE.Scene()
 // Object
 const parameters = {
 	color: '#0091ff',
-	spin: () => {
-		gsap.to(mesh.rotation, {
-			duration: 2,
-			y: mesh.rotation.y + Math.PI * 2,
-			z: mesh.rotation.z + Math.PI * 2,
-		})
-	},
 }
-
-const loadingManager = new THREE.LoadingManager()
-const textureLoader = new THREE.TextureLoader(loadingManager)
-const colorTexture = textureLoader.load('/Door_Wood_001_basecolor.jpg')
-const alphaTexture = textureLoader.load('/Door_Wood_001_opacity.jpg')
-const heightTexture = textureLoader.load('/Door_Wood_001_height.png')
-const normalTexture = textureLoader.load('/Door_Wood_001_normal.jpg')
-const ambientOcclusionTexture = textureLoader.load(
-	'/Door_Wood_001_ambientOcclusion.jpg'
+const material = new THREE.MeshBasicMaterial()
+const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), material)
+sphere.position.x = -1.5
+const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material)
+const torus = new THREE.Mesh(
+	new THREE.TorusGeometry(0.3, 0.2, 16, 32),
+	material
 )
-const metalnessTexture = textureLoader.load('/Door_Wood_001_metallic.jpg')
-const roughnessTexture = textureLoader.load('/Door_Wood_001_roughness.jpg')
-const minecraftTexture = textureLoader.load('/minecraft.png')
-
-// Texture configurations
-// ambientOcclusionTexture.repeat.x = 1
-// ambientOcclusionTexture.repeat.y = 1
-// ambientOcclusionTexture.wrapS = THREE.MirroredRepeatWrapping
-// ambientOcclusionTexture.wrapT = THREE.MirroredRepeatWrapping
-// ambientOcclusionTexture.offset.x = 0.5
-// ambientOcclusionTexture.offset.y = 0.5
-// ambientOcclusionTexture.rotation = Math.PI * 0.25
-// ambientOcclusionTexture.center.x = 0.5
-// ambientOcclusionTexture.center.y = 0.5
-minecraftTexture.magFilter = THREE.NearestFilter
-
-const geometry = new THREE.BoxGeometry(1, 1, 1)
-const material = new THREE.MeshPhongMaterial({
-	map: minecraftTexture,
-	specular: 0x444444,
-	shininess: 30,
-})
-const mesh = new THREE.Mesh(geometry, material)
-scene.add(mesh)
+torus.position.x = 1.5
+scene.add(sphere, plane, torus)
 
 // Debug Controls
-gui.add(mesh.position, 'y').min(-3).max(3).step(0.01).name('elevation')
-gui.add(mesh, 'visible')
 gui.add(material, 'wireframe')
 
 // Color
@@ -86,7 +53,6 @@ const camera = new THREE.PerspectiveCamera(
 )
 
 camera.position.z = 3
-camera.lookAt(mesh.position)
 scene.add(camera)
 
 // Controls
