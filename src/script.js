@@ -38,7 +38,9 @@ const gradientTexture = textureLoader.load('/textures/gradients/3.jpg')
 const parameters = {
 	color: '#0091ff',
 }
-const material = new THREE.MeshBasicMaterial({ map: doorColorTexture })
+const material = new THREE.MeshBasicMaterial()
+material.color = new THREE.Color('rgb(255, 0, 0)')
+
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), material)
 sphere.position.x = -1.5
 const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material)
