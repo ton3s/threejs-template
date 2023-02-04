@@ -45,8 +45,9 @@ const gradientTexture = textureLoader.load('/textures/gradients/3.jpg')
 const parameters = {
 	color: '#0091ff',
 }
-const material = new THREE.MeshMatcapMaterial()
-material.matcap = matcapTexture
+const material = new THREE.MeshPhongMaterial()
+material.shininess = 100
+material.specular = new THREE.Color(0x1188ff)
 material.side = THREE.DoubleSide
 
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), material)
@@ -83,12 +84,14 @@ const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
 
 // Light sources
-const ambient = new THREE.HemisphereLight(0xffffff, 0x666666, 0.3)
-scene.add(ambient)
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
+scene.add(ambientLight)
 
-const light = new THREE.DirectionalLight()
-light.position.set(0.2, 1, 1.5)
-scene.add(light)
+const pointLight = new THREE.PointLight(0xffffff, 0.5)
+pointLight.position.x = 2
+pointLight.position.y = 3
+pointLight.position.z = 4
+scene.add(pointLight)
 
 // Renderer
 const renderer = new THREE.WebGLRenderer({
