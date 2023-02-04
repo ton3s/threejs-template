@@ -5,6 +5,8 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
 import * as dat from 'lil-gui'
 import { MeshBasicMaterial } from 'three'
 
+const myText = 'Lily & Anna'
+
 /**
  * Base
  */
@@ -34,7 +36,7 @@ const material = new THREE.MeshMatcapMaterial({ matcap: matcapTexture })
 const fontLoader = new FontLoader()
 
 fontLoader.load('/fonts/helvetiker_regular.typeface.json', (font) => {
-	const textGeometry = new TextGeometry('State Farm', {
+	const textGeometry = new TextGeometry(myText, {
 		font: font,
 		size: 0.5,
 		height: 0.2,
@@ -46,7 +48,7 @@ fontLoader.load('/fonts/helvetiker_regular.typeface.json', (font) => {
 		bevelSegments: 4,
 	})
 
-	const text = new THREE.Mesh(textGeometry, material)
+	const text = new THREE.Mesh(textGeometry, new THREE.MeshNormalMaterial())
 	textGeometry.center()
 	scene.add(text)
 	console.log(textGeometry.boundingBox)
@@ -56,10 +58,10 @@ fontLoader.load('/fonts/helvetiker_regular.typeface.json', (font) => {
 const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 20, 45)
 const donuts = []
 
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 1; i++) {
 	const donut = new THREE.Mesh(
 		donutGeometry,
-		new THREE.MeshBasicMaterial({ wireframe: true })
+		new THREE.MeshNormalMaterial({ wireframe: true })
 	)
 	scene.add(donut)
 
@@ -73,7 +75,7 @@ for (let i = 0; i < 100; i++) {
 	donut.rotation.y = Math.random() * Math.PI
 
 	// Randomize the scale
-	const scale = Math.random()
+	const scale = Math.random() * 100
 	donut.scale.set(scale, scale, scale)
 	donuts.push(donut)
 }
