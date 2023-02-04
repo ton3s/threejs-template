@@ -51,24 +51,45 @@ const parameters = {
 	color: '#0091ff',
 }
 const material = new THREE.MeshStandardMaterial()
-material.metalness = 0.45
-material.roughness = 0.65
+material.map = doorColorTexture
+material.displacementMap = doorHeightTexture
+material.displacementScale = 0.05
 material.side = THREE.DoubleSide
 
-const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), material)
+const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 64, 64), material)
 sphere.position.x = -1.5
-const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material)
+const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1, 100, 100), material)
 const torus = new THREE.Mesh(
-	new THREE.TorusGeometry(0.3, 0.2, 16, 32),
+	new THREE.TorusGeometry(0.3, 0.2, 64, 128),
 	material
 )
 torus.position.x = 1.5
 scene.add(sphere, plane, torus)
 
+sphere.geometry.setAttribute(
+	'uv2',
+	new THREE.BufferAttribute(sphere.geometry.attributes.uv.array, 2)
+)
+plane.geometry.setAttribute(
+	'uv2',
+	new THREE.BufferAttribute(plane.geometry.attributes.uv.array, 2)
+)
+torus.geometry.setAttribute(
+	'uv2',
+	new THREE.BufferAttribute(torus.geometry.attributes.uv.array, 2)
+)
+material.aoMap = doorAmbientOcclusionTexture
+material.aoMapIntensity = 1
+material.normalScale.set(0.5, 0.5)
+material.transparent = true
+material.alphaMap = doorAlphaTexture
+
 // Debug Controls
 gui.add(material, 'wireframe')
 gui.add(material, 'metalness').min(0).max(1).step(0.0001)
 gui.add(material, 'roughness').min(0).max(1).step(0.0001)
+gui.add(material, 'aoMapIntensity').min(0).max(10).step(0.0001)
+gui.add(material, 'displacementScale').min(0).max(1).step(0.0001)
 
 // Color
 gui.addColor(parameters, 'color').onChange(() => {
@@ -79,7 +100,7 @@ gui.addColor(parameters, 'color').onChange(() => {
 const camera = new THREE.PerspectiveCamera(
 	75,
 	sizes.width / sizes.height,
-	1,
+	0.1,
 	100
 )
 
@@ -154,13 +175,13 @@ const tick = () => {
 
 	// Objects
 	// Update objects
-	sphere.rotation.y = 0.5 * elapsedTime
-	plane.rotation.y = 0.5 * elapsedTime
-	torus.rotation.y = 0.5 * elapsedTime
+	sphere.rotation.y = 0.2 * elapsedTime
+	plane.rotation.y = 0.2 * elapsedTime
+	torus.rotation.y = 0.2 * elapsedTime
 
-	sphere.rotation.x = 0.3 * elapsedTime
-	plane.rotation.x = 0.3 * elapsedTime
-	torus.rotation.x = 0.3 * elapsedTime
+	sphere.rotation.x = 0.15 * elapsedTime
+	plane.rotation.x = 0.15 * elapsedTime
+	torus.rotation.x = 0.15 * elapsedTime
 
 	// Render
 	renderer.render(scene, camera)
